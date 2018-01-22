@@ -1,0 +1,197 @@
+<html>
+<head>
+<title>画像を動かす</title>
+
+<script language="JavaScript"><!--
+// ------------------------------------------------------------
+// ページ読み込み時に自動実行(初期化)
+// ------------------------------------------------------------
+window.onload = function(){
+document.getElementById("Bullet").style.visibility="hidden";
+document.getElementById("Bullet2").style.visibility="hidden";
+document.getElementById("Finished").style.visibility="hidden";
+Own_machine_x=3;
+Bullet_x=-15;
+Bullet_y=-50;
+Bullet2_x=-15;
+Bullet2_y=-50;
+Target_x=45;
+Target_y=50;
+TMP = 3;
+score = 0;
+TimeCount=0;
+Timer =60;
+S_Interval = 0;
+// キーボードの入力状態を記録する配列
+}
+var input_key_buffer = new Array();
+// ------------------------------------------------------------
+// キーボードを押したときに実行されるイベント
+// ------------------------------------------------------------
+document.onkeydown = function (e){
+	if(!e) e = window.event; // レガシー
+
+	input_key_buffer[e.keyCode] = true;
+};
+
+// ------------------------------------------------------------
+// キーボードを離したときに実行されるイベント
+// ------------------------------------------------------------
+document.onkeyup = function (e){
+	if(!e) e = window.event; // レガシー
+
+	input_key_buffer[e.keyCode] = false;
+};
+
+// ------------------------------------------------------------
+// ウィンドウが非アクティブになる瞬間に実行されるイベント
+// ------------------------------------------------------------
+window.onblur = function (){
+	// 配列をクリアする
+	input_key_buffer.length = 0;
+};
+
+// ------------------------------------------------------------
+// キーボードが押されているか調べる関数
+// ------------------------------------------------------------
+function KeyIsDown(key_code){
+
+	if(input_key_buffer[key_code])	return true;
+
+	return false;
+}
+
+
+// ------------------------------------------------------------
+// 一定の時間隔で実行する(whileのイメージ)
+// ------------------------------------------------------------
+var GameMain = setInterval(function (){
+//-------------------------------------------------------------
+//キー入力操作系
+//-------------------------------------------------------------
+	// →キーが押されているか調べる
+	if(KeyIsDown(39)){
+		//console.log("右キーが押されている");
+		Own_machine_x+=4;
+	}
+	// ←が押されているか調べる
+	if(KeyIsDown(37)){
+		//console.log("左キーが押されている");
+		Own_machine_x-=4;
+	}
+//弾射出
+	if(KeyIsDown(32)){
+		//console.log("スペースキーが押されている");
+		if(S_Interval == 0){
+			if(document.getElementById("Bullet").style.visibility=="hidden"){
+				Bullet_x=Own_machine_x+10;
+				Bullet_y=300;
+				S_Interval = 20;
+				document.getElementById("Bullet").style.visibility="visible";
+			}else{
+				Bullet2_x=Own_machine_x+10;
+				Bullet2_y=300;
+				S_Interval = 20;
+				document.getElementById("Bullet2").style.visibility="visible";
+			}
+		}
+	}
+	if(document.getElementById("Bullet").style.visibility=="visible"){
+		Bullet_y-=10;
+		document.弾.style.left=Bullet_x;
+		document.弾.style.top=Bullet_y;
+	}
+	if(document.getElementById("Bullet2").style.visibility=="visible"){
+		Bullet2_y-=10;
+		document.弾2.style.left=Bullet2_x;
+		document.弾2.style.top=Bullet2_y;
+	}
+	if(Bullet_y<-22){
+		document.getElementById("Bullet").style.visibility="hidden";
+	}
+	if(Bullet2_y<-22){
+		document.getElementById("Bullet2").style.visibility="hidden";
+	}
+	if(Own_machine_x <= 3){
+		Own_machine_x = 3;
+	}
+	if(Own_machine_x >= 445){
+		Own_machine_x = 445;
+	}
+	if(S_Interval > 0){
+		S_Interval -= 1;
+	}
+//--------------------------------------------------------------
+//当たり判定1
+//--------------------------------------------------------------
+	if(Bullet_x>=Target_x-10&&Bullet_x<=Target_x+31){
+		if(Target_y<=Bullet_y+29&&Bullet_y<=Target_y+32){
+			document.getElementById("Bullet").style.visibility="hidden";
+			Bullet_x= 500;
+			Bullet_y= 500;
+			score += 100;
+		}
+	}
+	if(Bullet2_x>=Target_x-10&&Bullet2_x<=Target_x+31){
+		if(Target_y<=Bullet2_y+29&&Bullet2_y<=Target_y+32){
+			document.getElementById("Bullet2").style.visibility="hidden";
+			Bullet2_x= 500;
+			Bullet2_y= 500;
+			score += 100;
+		}
+	}
+// ------------------------------------------------------------
+//的動き
+// ------------------------------------------------------------
+Target_x = Target_x +TMP;
+if(Target_x>=445){
+	Target_x = 445;
+	TMP *= -1;
+}
+if(Target_x<=3){
+	Target_x = 3;
+	TMP *= -1;
+}
+//-------------------------------------------------------------
+//タイマー
+//-------------------------------------------------------------
+TimeCount += 1;
+if(TimeCount>=60){
+	Timer -= 1;
+	TimeCount = 0;
+}
+//-------------------------------------------------------------
+//描画更新系
+//-------------------------------------------------------------
+	document.ballImage.style.left=Own_machine_x;
+	document.Target.style.left=Target_x;
+	document.Target.style.top=Target_y;
+	document.getElementById("Score").textContent = score;
+	document.getElementById("Timer").textContent = Timer;
+//-------------------------------------------------------------
+//終了処理
+//-------------------------------------------------------------
+if(Timer==0){
+	document.getElementById("Finished").style.visibility="visible";
+	clearInterval(GameMain)
+}
+//-------------------------------------------------------------
+},1000/60);
+// --></script>
+
+</head>
+<body>
+
+<img src="sample13.gif" name="ballImage" style="position:absolute;left:3px;top:300px;">
+<img src="弾(仮).png" id="Bullet" name="弾" style="position:absolute;left:-15px;top:-50px;">
+<img src="弾(仮).png" id="Bullet2" name="弾2" style="position:absolute;left:-15px;top:-50px;">
+<img src="的(仮).png" id="Target" name="的(仮)" style="position:absolute;left:45px;top:50px;">
+<img src=枠.png name="枠" style="position:absolute;left:0px;top:0px;">
+<h1 style="position:absolute;left:500px;top:20px;">Score</h1>
+<h1 id="Score" style="position:absolute;left:535px;top:50px;"></h1>
+<h1 style="position:absolute;left:500px;top:270px;">残り時間</h1>
+<h1 id="Timer" style="position:absolute;left:540px;top:300px;"></h1>
+<h1 id="Finished" style="position:absolute;left:145px;top:200px;">GAMEOVER</h1>
+
+</body>
+</html>
